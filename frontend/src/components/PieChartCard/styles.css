@@ -1,0 +1,21 @@
+.pie-chart{
+    margin-bottom: 30px;
+    margin-top: 50px;
+}
+
+.apexcharts-canvas{
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.apexcharts-legend.apexcharts-align-center{
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (min-width: 992px){
+    .pie-chart{
+        margin-right: 100px;
+    }
+}
