@@ -1,22 +1,10 @@
 export type FilterData = {
-    store: Store;
-    //storeName: string;
+    store?: Store;
 }
 
 export type Store = {
-    value: string;
-    label: string;
-}
-
-export type SalesByStore = {
-    storeName: string;
-    sum: number;
-}
-
-export const sumSalesByStory = (salesByStory: SalesByStore[] = []) => {
-    return salesByStory.reduce((previousValue, currentvalue) => {
-        return previousValue + currentvalue.sum;
-    }, 0);
+    id: number;
+    name: string;
 }
 
 export type PieChartConfig = {
@@ -25,3 +13,17 @@ export type PieChartConfig = {
 }
 
 export type Gender = 'MALE' | 'FEMALE' | 'OTHER';
+
+export type SalesByGender = {
+    gender: Gender[];
+    sum: number[];
+}
+
+export type Summary = {
+    sum: number,
+    min: number,
+    max: number,
+    avg: number,
+    count: number
+}
+

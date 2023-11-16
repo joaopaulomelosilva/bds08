@@ -1,10 +1,9 @@
 import './styles.css';
 import PieChartCard from '../PieChartCard';
-import { FilterData, PieChartConfig, SalesByStore, sumSalesByStory } from '../../types';
-import { useEffect, useMemo, useState } from 'react';
+import { FilterData, PieChartConfig, SalesByGender, Summary } from '../../types';
+import { useEffect, useState } from 'react';
 import { makeRequest } from '../../utils/requests';
-import { formatPrice } from '../../utils/formatters';
-import { buildSalesByStoreChart } from '../../helpers';
+import { convertSalesToPieChart, formatPrice } from '../../utils/formatters';
 
 type Props = {
     filterData?: FilterData;
@@ -12,43 +11,43 @@ type Props = {
 
 const SalesSummaryChart = ( {filterData} : Props) => {
 
-    const [salesByStore, setSalesByStore] = useState<PieChartConfig>();
+    const [totalSum, setTotalSum] = useState<number>(0);
 
-    const params = useMemo(() => filterData, [filterData]);
+    const [salesByGender, setSalesByGender] = useState<PieChartConfig>();
 
-    const [totalSum, setTotalSum] = useState(0);
-
-    useEffect( () => {
-
-        makeRequest.get<SalesByStore[]>('/sales/by-store')
-        .then((response: any) => {
-
-            const newSalesByStore = buildSalesByStoreChart(response.data);
-            setSalesByStore(newSalesByStore);
-
-
-            const newTotalSum = sumSalesByStory(response.data);
-            setTotalSum(newTotalSum);
+    useEffect(() => {
+        makeRequest.get<SalesByGender[]>(`/sales/by-gender?storeId=${filterData?.store?.id}`) 
+        .then((response) => {
+            const pieChart = convertSalesToPieChart(response.data);
+            setSalesByGender(pieChart as PieChartConfig);
         })
-        .catch(() => {
-            console.log("error");
+        .catch((error) => {
+            console.error(error);
         })
-    }, [params]);
+    }, [filterData]);
+    
+    useEffect(() => {
+        makeRequest.get<Summary>(`/sales/summary?storeId=${filterData?.store?.id}`) 
+        .then((response) => {
+            setTotalSum(response.data.sum);
+        })
+        .catch((error) => {
+            console.error(error);
+        })
+    }, [filterData]);
 
     return(
-        <main>
-            <div className="base-card Sales-Summary-Chart-container">
-                <div className="total-sales-container">
-                    <h1>{formatPrice(totalSum)}</h1>
-                    <p>Total de vendas</p>
-                </div>
-                <PieChartCard
-                    name={"Lojas"}
-                    labels={salesByStore?.labels}
-                    series={salesByStore?.series}
-                />
+        <div className="base-card Sales-Summary-Chart-container">
+            <div className="total-sales-container">
+                <h1>{formatPrice(totalSum)}</h1>
+                <p>Total de vendas</p>
             </div>
-        </main>
+            <PieChartCard
+                name={"Lojas"}
+                labels={salesByGender?.labels}
+                series={salesByGender?.series}
+            />
+        </div>
     )
 };
 

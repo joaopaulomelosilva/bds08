@@ -1,7 +1,7 @@
-
-import ReactApexChart from 'react-apexcharts';
 import './styles.css';
+import ReactApexChart from 'react-apexcharts';
 import { buildPieChartConfig } from './helpers';
+
 
 type Props = {
     labels?: string[];
@@ -10,6 +10,7 @@ type Props = {
 }
 
 const PieChartCard = ({labels = [], name, series = []} : Props) => {
+
     return(
         <div className="pie-chart">
             <ReactApexChart

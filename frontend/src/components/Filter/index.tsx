@@ -1,22 +1,9 @@
-
-import Select from 'react-select';
 import './styles.css';
-import { FilterData, SalesByStore, Store } from '../../types';
+import Select from 'react-select';
+import { FilterData, Store } from '../../types';
 import { useEffect, useState } from 'react';
 import { makeRequest } from '../../utils/requests';
-
-const options = [
-    {value: 'Araguari', label: 'Araguari'},
-    {value: 'Alpinópolis', label: 'Alpinópolis'},
-    {value: 'Passos', label: 'Passos'}
-]
-
-function createStoreFromValue(valueSelected: string): Store {
-    return {
-        value: valueSelected,
-        label: valueSelected,
-    };
-}
+import { Controller, useForm } from 'react-hook-form';
 
 type Props = {
     onFilterChange: (filter: FilterData) => void;
@@ -24,43 +11,65 @@ type Props = {
 
 const Filter = ({onFilterChange} : Props) => {
 
-    const [store, setStore] = useState<Store>();
+    const {
+        handleSubmit,
+        setValue,
+        control,
+    } = useForm<FilterData>();
+
+    const onSubmit = (formData: FilterData) => {
+        onFilterChange(formData);
+    }
+
+    const [stores, setStores] = useState<Store[]>([]);
 
     const OnChangeStore = (value: Store) => {
-
-        if (value) {
-            const selectedStore = createStoreFromValue(value.value);
-            setStore(selectedStore);
-            onFilterChange({ store: selectedStore });
-            console.log(selectedStore);
+        
+        if(value === null){
+            const obj : Store = {
+                id: 0,
+                name: 'Selecionar Loja'
+            }
+            setValue('store', obj);
+        }
+        else{
+            setValue('store', value);
         }
 
+        handleSubmit(onSubmit)();
     };
 
-    useEffect( () => {
-
-        makeRequest.get<SalesByStore[]>('/sales/by-store')
-        .then((response: any) => {
-            setStore(response.storeName);
-        
+    useEffect(() => {
+        makeRequest.get<Store[]>('/stores')
+        .then((response) => {
+            setStores(response.data as Store[]);
         })
-        .catch(() => {
-            console.log("error");
+        .catch((error) => {
+            console.error(error);
         })
     }, []);
 
     return(
-        <main>
-            <div className='base-card filter-container'>
-                <Select
-                    options={options}
-                    value={store}
-                    onChange={ value => OnChangeStore(value as Store)}
-                    classNamePrefix="filter-select-citys"
+        <form className='base-card filter-container'>
+            <Controller
+                name='store'
+                control={control}
+                render={({field}) => (
+
+                    <Select {...field}
+                    options={stores}
+                    isClearable
                     placeholder="Selecionar Loja"
-                />
-            </div>
-        </main>
+                    classNamePrefix="filter-select-citys"
+
+                    onChange={value => OnChangeStore(value as Store)}
+
+                    getOptionLabel={(str: Store) => str.name}
+                    getOptionValue={(str: Store) => String(str.id)}
+                    />
+                )}
+            />
+        </form>
     )
 };
 

@@ -31,7 +31,7 @@ export const buildPieChartConfig = (labels: string[] = [], name: string) => {
         }
     },
     dataLabels: {
-        enabled: false
+        enabled: true
     },
     plotOptions: {
         pie: {

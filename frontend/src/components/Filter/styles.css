@@ -2,7 +2,8 @@
 .filter-container{
     height: 130px;
     display: flex;
-    align-items: center; 
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 /* REACT SELECT*/
@@ -41,6 +42,21 @@
     color: var(--primary-color) !important;
 }
 
+.filter-select-citys__menu{
+    color: rgb(255, 255, 255) !important;
+    background-color: aqua;
+}
+
+.filter-select-citys__menu input{
+    background-color: rgb(255, 255, 255) !important;
+    color: black !important;
+}
+
+.filter-select-citys__menu select{
+    background-color: rgb(255, 255, 255) !important;
+    color: black !important;
+}
+
 /* ---- */
 
 
@@ -53,5 +69,11 @@
 
     .filter-select-citys{
         width: 270px !important;
+    }
+}
+
+@media (min-width: 1200px){
+    .filter-container{
+        margin-bottom: 40px;
     }
 }
